@@ -10,7 +10,13 @@ class CompilerControls {
         this.execCmd = params.execCmd;
         this.compileStatus = params.compileStatus;
         this.compileBtnTooltip = params.compileBtnTooltip;
-
+        this.test_checked = false
+        
+        this.defaultBuildCmd = this.buildCmd()
+        this.runtestBuildCmd = "gcc -lm -Wall -fmax-errors=10 -Wextra program.c test.c -o program"
+        console.log("default: " + this.defaultBuildCmd)
+        console.log("test: " + this.runtestBuildCmd)
+        
         this.compileBtnEnable = ko.pureComputed(() => {
             const ready = !(this.compileStatus() === 'Waiting' || this.compileStatus() === 'Compiling');
             if (ready) {
@@ -33,6 +39,16 @@ class CompilerControls {
         $compileBtn.popover();
         // We don't want the "gcc opts errors" popover to be dismissed when clicked
         $('#gccoptions').popover().click((e) => { e.preventDefault(); });
+
+        const $runtestCheckbox= $('#runtestCheckbox');
+        $runtestCheckbox.click(() => {
+            this.test_checked = !this.test_checked;
+            if(this.test_checked)
+                this.buildCmd(this.runtestBuildCmd)
+            else
+                this.buildCmd(this.defaultBuildCmd)
+        });
+    
     }
 
     dispose() {
