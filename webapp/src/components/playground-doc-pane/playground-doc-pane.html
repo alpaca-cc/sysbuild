@@ -1,1 +1,6 @@
 <div data-bind="html: docHtml"></div>
+
+<div>
+    <button id="runtest-btn" data-bind="enable: runtestBtnEnable, css: { 'btn-success': runtestBtnEnable }, attr: { 'data-content': 'tooltip' }"
+          data-toggle="popover" data-placement="top" data-trigger="hover focus" data-container="body" type="button" class="btn btn-success pull-right">Run Tests</button>
+</div>

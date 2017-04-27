@@ -3,7 +3,6 @@ import * as SysGlobalObservables from 'app/sys-global-observables';
 class LiveEdit {
     constructor(_runtime) {
         this.runtime = _runtime;
-
         const updateCompileButton = () => {
             const ready = this.runtime.ready();
             SysGlobalObservables.vmState(ready ? 'Running' : 'Booting');
@@ -66,6 +65,7 @@ class LiveEdit {
         if (result.exitCode === 0) {
             SysGlobalObservables.compileStatus(result.stats.warning > 0 ? 'Warnings' : 'Success');
             this.runtime.sendExecCmd(SysGlobalObservables.execCmd());
+            console.log("sent command: " + SysGlobalObservables.execCmd())
         } else {
             SysGlobalObservables.compileStatus('Failed');
         }

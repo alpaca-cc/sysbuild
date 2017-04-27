@@ -6,7 +6,7 @@ import * as SysGlobalObservables from 'app/sys-global-observables';
 
 const defaultEditorText =
 `/*
-* Write your C code here
+* Write your C code here haha
 * This file (program.c) will be overwritten if you navigate away from
 * the page or to a different lesson! To save your code, either
 * download the file to your computer, or rename program.c to
@@ -45,6 +45,10 @@ class PlayActivityPage {
         if (typeof playActivity.code !== 'undefined') {
             editorText = playActivity.code;
         }
+        else {
+            console.log("Undefined code for this section :(");
+            console.log(playActivity.code)
+        }
         this.editorParams.initialEditorText = editorText;
 
         let buildCmd = defaultBuildCmd;
@@ -66,12 +70,14 @@ class PlayActivityPage {
         if (playActivity.docFile) {
             this.doc = {
                 url: 'https://cs-education.github.io/sysassets/' + playActivity.docFile,
-                format: 'markdown'
+                format: 'markdown',
+                testcode: playActivity.testcode
             };
         } else {
             this.doc = {
                 text: playActivity.doc || '',
-                format: 'markdown'
+                format: 'markdown',
+                testcode: playActivity.testcode
             };
         }
     }

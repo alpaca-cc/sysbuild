@@ -3,7 +3,7 @@ import ko from 'knockout';
 class Lessons {
     constructor() {
         this.chapters = ko.observableArray([]);
-        $.getJSON('https://cs-education.github.io/sysassets/sys.min.json', (data) => {
+        $.getJSON('https://api.myjson.com/bins/1aeb7d', (data) => {
             this.chapters(data.chapters);
         });
     }
@@ -13,6 +13,9 @@ class Lessons {
         // but we want the caller to get the activity once they are loaded.
         // So, we return a Knockout computed observable, which updates
         // automatically when the "chapters" observable changes.
+        //console.log("json:")
+        //console.log(this.chapters()1)
+        
         return ko.pureComputed(() => {
             const chapter = this.chapters()[chapterIdx];
             if (!chapter) return null;

@@ -18,6 +18,7 @@ export const editorAnnotations = ko.observableArray([]);
 export const currentFileName = ko.observable('untitled');
 export const currentFilePath = ko.observable('');
 export const compileBtnEnable = ko.observable('');
+export const runtestBtnEnable = ko.observable('');
 
 export const projectLicense = ko.observable('');
 

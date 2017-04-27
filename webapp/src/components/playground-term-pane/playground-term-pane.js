@@ -36,6 +36,8 @@ class PlaygroundTermPane {
            the hideTerminalElements function), ready to be moved back if and when this
            component is constructed again at some point. */
         for (let i = 0; i < 2; i++) {
+            console.log("Hi there")
+            console.log($(`#tty${i}`))
             this.ttyContainers[i].prepend($(`#tty${i}`));
         }
     }
