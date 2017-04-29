@@ -1,3 +1,4 @@
+
 <div id="compile-opts-container">
     <div class="row">
         <div class="col-sm-10">
@@ -11,15 +12,16 @@
             </div>
             <div class="row">
                 <label class="col-sm-1 control-label" for="execcmd"><small class="pull-right">exec</small></label>
-                <div class="col-sm-11">
+                <div class="col-sm-9">
                     <input class="form-control input-sm" type="text" id="execCmd" maxlen=256 data-bind="textInput: execCmd" placeholder="Program arguments">
                 </div>
+                <label><input id="runtestCheckbox" type="checkbox" /> run tests</label>
             </div>
         </div>
         <button id="compile-btn"
           data-bind="enable: compileBtnEnable, css: { 'btn-success': compileBtnEnable }, attr: { 'data-content': compileBtnTooltip }"
           data-toggle="popover" data-placement="top" data-trigger="hover focus" data-container="body"
-          type="button" class="btn btn-xs pull-right col-sm-2" disabled="disabled">
+          type="button" class="btn btn-xs col-sm-2 center" disabled="disabled">
             Run It<br>
             <span class="glyphicon glyphicon-play"></span>
         </button>

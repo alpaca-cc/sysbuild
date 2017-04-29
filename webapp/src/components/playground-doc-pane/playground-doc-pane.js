@@ -1,9 +1,15 @@
 import ko from 'knockout';
 import templateMarkup from 'text!./playground-doc-pane.html';
 import marked from 'marked';
-
+import { notify } from 'app/notifications';
+import * as SysGlobalObservables from 'app/sys-global-observables';
+import lessons from 'app/lessons';
+import SysFileSystem from 'app/sys-filesystem';
+import sysRuntime from 'app/sys-runtime';
 class PlaygroundDocPane {
     constructor(params) {
+
+        
         this.docHtml = ko.observable('');
         const processFunc = params.doc.format === 'markdown' ? marked : (data) => data;
         if (params.doc.url) {
@@ -13,6 +19,15 @@ class PlaygroundDocPane {
         } else {
             this.docHtml(processFunc(params.doc.text));
         }
+
+        sysRuntime.addListener('ready', () => {
+            this.fs = SysFileSystem;
+            if(params.doc.testcode)
+                this.fs.writeFile("test.c", params.doc.testcode)
+        });
+        /*
+
+        */
     }
 
     dispose() {
