@@ -74,16 +74,16 @@ class SysRuntime {
                 this.sendKeys('tty1', 'stty -clocal crtscts -ixoff\necho boot2ready-$?\n', 'boot2ready-0', onTTY1RootLogin);
             }
         };
-
         const termTTY0 = new LinuxTerm('tty0');
         const termTTY1 = new LinuxTerm('tty1');
-
-        const jor1kparameters = {
+         
+         const jor1kparameters = {
             system: {
                 kernelURL: 'vmlinux.bin.bz2', // kernel image
                 memorysize: 32, // in MB, must be a power of two
                 cpu: 'asm', // short name for the cpu to use
                 ncores: 1,
+                arch: 'or1k',
             },
             fs: {
                 basefsURL: 'basefs-compile.json', // json file with the basic filesystem configuration.
@@ -108,7 +108,25 @@ class SysRuntime {
             worker: new Worker(jor1kWorkerUrl),
             relayURL: 'wss://relay.widgetry.org/',
         };
-
+        
+        /*
+        const jor1kparameters = {
+            system: {
+                kernelURL: "bbl",
+                memorysize: 32, // in MB, must be a power of two
+                cpu: 'asm', // short name for the cpu to use
+                ncores: 1,
+                arch: 'riscv',
+            },
+            terms: [termTTY0, termTTY1],   // canvas ids for the terminals
+            statsid: 'vm-stats',  // element id for displaying VM statistics
+            memorysize: 32, // in MB, must be a power of two
+            path: "../sys/riscv/",
+            worker: new Worker(jor1kWorkerUrl),
+            relayURL: 'wss://relay.widgetry.org/',
+        };
+        */            
+        
         this.jor1kgui = new Jor1k(jor1kparameters);
 
         termTTY0.SetCharReceiveListener(this.putCharTTY0Listener);
@@ -176,7 +194,7 @@ class SysRuntime {
 
         const cmd = 'echo \\#\\#\\#GCC_COMPILE\\#\\#\\#;clear;pwd;' + buildCmd + '; echo GCC_EXIT_CODE: $?; echo \\#\\#\\#GCC_COMPILE_FINISHED\\#\\#\\#' +
             this.compileTicket + '.;clear\n';
-
+        console.log("The build command was: " + buildCmd)
         this.expecting = this.sendKeys('tty0', cmd, 'GCC_COMPILE_FINISHED###' + this.compileTicket + '.', compileCb);
 
         return this.compileTicket;
