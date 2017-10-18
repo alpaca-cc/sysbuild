@@ -6,10 +6,9 @@ import * as SysGlobalObservables from 'app/sys-global-observables';
 import lessons from 'app/lessons';
 import SysFileSystem from 'app/sys-filesystem';
 import sysRuntime from 'app/sys-runtime';
+
 class PlaygroundDocPane {
     constructor(params) {
-
-        
         this.docHtml = ko.observable('');
         const processFunc = params.doc.format === 'markdown' ? marked : (data) => data;
         if (params.doc.url) {
@@ -22,8 +21,9 @@ class PlaygroundDocPane {
 
         sysRuntime.addListener('ready', () => {
             this.fs = SysFileSystem;
-            if(params.doc.testcode)
-                this.fs.writeFile("test.c", params.doc.testcode)
+            if (params.doc.testcode) {
+                this.fs.writeFile('test.c', params.doc.testcode);
+            }
         });
         /*
 

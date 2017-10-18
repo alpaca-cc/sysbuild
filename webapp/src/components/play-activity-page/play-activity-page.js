@@ -6,7 +6,7 @@ import * as SysGlobalObservables from 'app/sys-global-observables';
 
 const defaultEditorText =
 `/*
-* Write your C code here haha
+* Write your C code here
 * This file (program.c) will be overwritten if you navigate away from
 * the page or to a different lesson! To save your code, either
 * download the file to your computer, or rename program.c to
@@ -44,10 +44,6 @@ class PlayActivityPage {
         let editorText = defaultEditorText;
         if (typeof playActivity.code !== 'undefined') {
             editorText = playActivity.code;
-        }
-        else {
-            console.log("Undefined code for this section :(");
-            console.log(playActivity.code)
         }
         this.editorParams.initialEditorText = editorText;
 
