@@ -91,12 +91,15 @@ class SysRuntime {
                 extendedfsURL: '../fs.json',
                 earlyload: [
                     'usr/bin/gcc',
-                    'usr/libexec/gcc/or1k-linux-musl/4.9.0/cc1',
-                    'usr/libexec/gcc/or1k-linux-musl/4.9.0/collect2',
+                    'usr/libexec/gcc/or1k-linux-musl/4.9.1/cc1',
+                    'usr/libexec/gcc/or1k-linux-musl/4.9.1/collect2',
                     'usr/lib/libbfd-2.24.51.20140817.so',
                     'usr/lib/gcc/or1k-linux-musl/4.9.0/libgcc.a',
                     'usr/bin/as',
                     'usr/include/stdio.h',
+                    'usr/bin/g++',
+                    'usr/libexec/gcc/or1k-linux-musl/4.9.1/cc1plus',
+                    'usr/include/c++',
                 ], // list of files which should be loaded immediately after they appear in the filesystem
                 lazyloadimages: [
                 ], // list of automatically loaded images after the basic filesystem has been loaded
