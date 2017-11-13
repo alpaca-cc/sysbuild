@@ -14,10 +14,12 @@ export const gccOptsError = ko.observable('');
 export const gccErrorCount = ko.observable(0);
 export const gccWarningCount = ko.observable(0);
 export const editorAnnotations = ko.observableArray([]);
+export const editorSelectedLanguage = ko.observable('c');
 
 export const currentFileName = ko.observable('untitled');
 export const currentFilePath = ko.observable('');
 export const compileBtnEnable = ko.observable('');
+export const runtestBtnEnable = ko.observable('');
 
 export const projectLicense = ko.observable('');
 

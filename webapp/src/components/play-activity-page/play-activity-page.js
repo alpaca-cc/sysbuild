@@ -24,6 +24,27 @@ int main() {
 const defaultBuildCmd = 'gcc -lm -Wall -fmax-errors=10 -Wextra program.c -o program';
 const defaultExecCmd = './program';
 
+const runtestBuildCmd = 'gcc -lm -Wall -fmax-errors=10 -Wextra program.c test.c -o program';
+
+const defaultCppText =
+`/*
+* Write your C++ code here
+* This file (student.cpp) can be saved by pressing ctrl(cmd) + s
+* until you clear your browser's localStorage.
+* You can also download the file to your computer through the File Browser.
+*/
+#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Hello world!\\n";
+    return 0;
+}
+`;
+
+const defaultCppBuildCmd = 'g++ -lm -Wall -fmax-errors=10 -Wextra hello.cpp -o hello';
+const defaultCppExecCmd = './hello';
+
 class PlayActivityPage {
 
     constructor(params) {
@@ -47,6 +68,11 @@ class PlayActivityPage {
         }
         this.editorParams.initialEditorText = editorText;
 
+        if (typeof playActivity.testcode !== 'undefined') {
+            this.editorParams.testcode = playActivity.testcode;
+            this.compilerParams.testCmd = runtestBuildCmd;
+        }
+
         let buildCmd = defaultBuildCmd;
         if (typeof playActivity.buildCmd !== 'undefined') {
             buildCmd = playActivity.buildCmd;
@@ -66,12 +92,14 @@ class PlayActivityPage {
         if (playActivity.docFile) {
             this.doc = {
                 url: 'https://cs-education.github.io/sysassets/' + playActivity.docFile,
-                format: 'markdown'
+                format: 'markdown',
+                testcode: playActivity.testcode // May be put in a different place
             };
         } else {
             this.doc = {
                 text: playActivity.doc || '',
-                format: 'markdown'
+                format: 'markdown',
+                testcode: playActivity.testcode // May be put in a different place
             };
         }
     }
@@ -121,7 +149,8 @@ class PlayActivityPage {
             autoInclude: autoInclude,
             theme: theme,
             fontSize: fontSize,
-            keyboardShortcuts: []
+            keyboardShortcuts: [],
+            defaultCppText: defaultCppText
         };
     }
 
@@ -133,7 +162,9 @@ class PlayActivityPage {
             lastGccOutput: SysGlobalObservables.lastGccOutput,
             gccOptsError: SysGlobalObservables.gccOptsError,
             gccErrorCount: SysGlobalObservables.gccErrorCount,
-            gccWarningCount: SysGlobalObservables.gccWarningCount
+            gccWarningCount: SysGlobalObservables.gccWarningCount,
+            defaultCppBuildCmd: defaultCppBuildCmd,
+            defaultCppExecCmd: defaultCppExecCmd
         };
     }
 
@@ -151,10 +182,11 @@ class PlayActivityPage {
         this.editorParams.editorTextGetter = ko.observable(() => '');
 
         const compile = () => {
-            if (this.editorParams.autoInclude()) {
-                this.autoIncluder.addMissingHeaders(this.editorParams.editorTextGetter);
-            }
-            const buildCmd = this.compilerParams.buildCmd();
+            // TODO: This function is buggy. Will change the content display of the file when one more file is present.
+            // if (this.editorParams.autoInclude()) {
+            //     this.autoIncluder.addMissingHeaders(this.editorParams.editorTextGetter);
+            // }
+            const buildCmd = this.compilerParams.buildCmd();   
             (SysGlobalObservables.runCode())(buildCmd);
         };
 

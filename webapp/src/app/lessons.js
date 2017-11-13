@@ -3,7 +3,10 @@ import ko from 'knockout';
 class Lessons {
     constructor() {
         this.chapters = ko.observableArray([]);
-        $.getJSON('https://cs-education.github.io/sysassets/sys.min.json', (data) => {
+        // $.getJSON('https://cs-education.github.io/sysassets/sys.min.json', (data) => {
+        //     this.chapters(data.chapters);
+        // });
+        $.getJSON('../sysassets/sys.min.json', (data) => {
             this.chapters(data.chapters);
         });
     }

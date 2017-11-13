@@ -19,9 +19,15 @@ class Editor {
         prefs.autoInclude = params.autoInclude;
         this.prefs = prefs;
 
+        this.defaultCppText = params.defaultCppText;
+
         this.currentFileName = SysGlobalObservables.currentFileName;
 
         this.availableThemes = ko.observableArray(['tomorrow', 'monokai', 'terminal', 'xcode']);
+
+        this.availableLanguages = ko.observableArray(['c', 'c++']);
+
+        this.editorSelectedLanguage = SysGlobalObservables.editorSelectedLanguage;
 
         this.supportedAceModes = ['ace/mode/c_cpp', 'ace/mode/makefile'];
 
@@ -30,6 +36,8 @@ class Editor {
 
         this.editorId = 0;
         this.elementIdPrefix = 'editor' + this.editorId + '-';
+
+        this.testcode = params.testcode;
 
         this.initAce('code');
         this.initSettingsDialog();
@@ -54,10 +62,11 @@ class Editor {
 
         params.editorTextGetter(this.getText.bind(this));
 
-        this.autoIncluder = new AutoIncluder();
-        $('#autoinclude-code-btn').click(() => {
-            this.autoIncluder.addMissingHeaders(params.editorTextGetter);
-        });
+        // TODO: This function is buggy. Will change the content display of the file when one more file is present.
+        // this.autoIncluder = new AutoIncluder();
+        // $('#autoinclude-code-btn').click(() => {
+        //     this.autoIncluder.addMissingHeaders(params.editorTextGetter);
+        // });
 
         SysGlobalObservables.editor = this;
         SysGlobalObservables.observableEditor(this);
@@ -268,6 +277,14 @@ class Editor {
 
     getText() {
         return this.aceEditor.getSession().getValue();
+    }
+
+    getTestCode() {
+        return this.testcode;
+    }
+
+    getDefaultCppText() {
+        return this.defaultCppText;
     }
 
     setFile(path, filename, text) {

@@ -30,7 +30,8 @@
 /* hack for the gcc options + program args + compile button toolbar */
 #compile-opts-container .col-sm-1,
 #compile-opts-container .col-sm-10,
-#compile-opts-container .col-sm-11 {
+#compile-opts-container .col-sm-11,
+#compile-opts-container .col-sm-9 {
     padding: 1px;
 }
 
@@ -52,6 +53,13 @@
 
 #compile-opts-container .control-label {
     padding-right: 2px;
+}
+
+#compile-opts-container .test-section {
+    display: flex;
+    .runtest-text {
+        margin: 5px 0 0 5px;
+    }
 }
 
 /* The Ace search field somehow inherited a white font on a white background,

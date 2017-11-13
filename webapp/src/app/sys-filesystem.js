@@ -39,6 +39,14 @@ class SysFileSystem {
         this.localFS.writeFileSync(path, buf);
     }
 
+    writeBinaryFile(path, data) {
+        if (path.charAt(0) !== '/') {
+            path = '/' + path;
+        }
+
+        this.jor1kFS.MergeBinaryFile('home/user' + path, data);
+    }
+
     readFile(path, cb) {
         if (this.localFS.statSync(path).isDirectory()) {
             return;

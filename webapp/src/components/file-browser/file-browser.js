@@ -45,6 +45,9 @@ class Filebrowser {
             SysGlobalObservables.fileBrowser = this;
             SysGlobalObservables.observableFS(this);
 
+            this.language = SysGlobalObservables.editorSelectedLanguage;
+            this.currentShownFile = SysGlobalObservables.currentFileName;
+
             this.depth = -1;
             this.directoryState = [];
             this.activePath = '';
@@ -85,6 +88,19 @@ class Filebrowser {
                     }
                 }
             });
+
+            // Add Listener to language change
+            this.language.subscribe(() => {
+                this.changeDisplayFile(this.language());
+            })
+
+            this.currentShownFile.subscribe(() => {
+                if (this.currentShownFile().match(/\.(c)\b/) !== null && this.language() !== 'c') {
+                    this.language('c');
+                } else if (this.currentShownFile().match(/\.(cpp)\b/) !== null && this.language() !== 'cpp') {
+                    this.language('c++');
+                }
+            })
 
             // Save Hotkey
             this.editor.addKeyboardCommand(
@@ -346,9 +362,11 @@ class Filebrowser {
                         reader.onload = (e) => {
                             if (itemId === undefined) {
                                 fs.writeFile('/' + file.name, new Buffer(reader.result, 'binary'));
+                                // fs.writeBinaryFile('/' + file.name, new Uint8Array(reader.result));
                                 writeDroppedFile(i + 1, done);
                             } else if (self.metaData[itemId].isDirectory) {
                                 fs.writeFile(self.metaData[itemId].path + '/' + file.name, new Buffer(reader.result, 'binary'));
+                                // fs.writeBinaryFile(self.metaData[itemId].path + '/' + file.name, new Uint8Array(reader.result));
                                 writeDroppedFile(i + 1, done);
                             } else {
                                 let newPath = self.metaData[itemId].parentPath + '/' + file.name;
@@ -356,10 +374,12 @@ class Filebrowser {
                                     newPath = self.metaData[itemId].parentPath + file.name;
                                 }
                                 fs.writeFile(newPath, new Buffer(reader.result, 'binary'));
+                                // fs.writeBinaryFile(newPath, new Uint8Array(reader.result));
                                 writeDroppedFile(i + 1, done);
                             }
                         };
                         reader.readAsBinaryString(file);
+                        // reader.readAsArrayBuffer(file);
                     }(i));
                 };
 
@@ -385,7 +405,7 @@ class Filebrowser {
                     // open
                     $curr.data('status', 'opened');
 
-                    if (this.directoryState.indexOf(data.path) === -1)  {
+                    if (data !== undefined && this.directoryState.indexOf(data.path) === -1)  {
                         this.directoryState.push(data.path);
                         this.directoryState.sort();
                     }
@@ -395,23 +415,29 @@ class Filebrowser {
                     .removeClass(iconClass.closed)
                     .addClass(iconClass.opened);
 
-                    children = this.fs.getDirectoryChildren(data.path);
-                    this.assignChildren(data, children, data.path);
+                    if (data !== undefined) {
+                        children = this.fs.getDirectoryChildren(data.path);
+                        this.assignChildren(data, children, data.path);
+                    }
 
                     $curr.trigger('opened');
                 } else {
                     // collapse
                     $curr.data('status', 'closed');
 
-                    this.directoryState = this._removeElemFromArray(this.directoryState, data.path).sort();
+                    if (data !== undefined) {
+                        this.directoryState = this._removeElemFromArray(this.directoryState, data.path).sort();
+                    }
 
                     $curr
                         .find('i')
                         .removeClass(iconClass.opened)
                         .addClass(iconClass.closed);
 
-                    for (let i = 0; i < data.children.length; i++) {
-                        this.cleanUp(data.children[i]);
+                    if (data !== undefined) {
+                        for (let i = 0; i < data.children.length; i++) {
+                            this.cleanUp(data.children[i]);
+                        }
                     }
 
                     $curr.trigger('closed');
@@ -420,6 +446,15 @@ class Filebrowser {
 
             // overwrite program.c with contents of the editor for the current play activity
             fs.writeFile('/program.c', new Buffer(this.editor.getText(), 'binary'));
+            // overwrite test.c with newTestCode.
+            if (this.editor.getTestCode() !== undefined) {
+                fs.writeFile('/test.c', new Buffer(this.editor.getTestCode(), 'binary'));
+            }
+
+            // write hello.cpp with the defaultCppText if it is not existed
+            if (this.metaDataPathLookUp === undefined || (this.metaDataPathLookUp !== undefined && !this.metaDataPathLookUp['/hello.cpp'])) {
+                fs.writeFile('/hello.cpp', new Buffer(this.editor.getDefaultCppText(), 'binary'));
+            }
 
             // init
             this.init();
@@ -683,6 +718,25 @@ class Filebrowser {
             'px;"><span class="item-icon"></span>' + data.name + '</div>';
         }
         return element;
+    }
+
+    changeDisplayFile(language) {
+        this.saveActiveFile();
+        if (language === 'c') {
+            if (this.metaDataPathLookUp['/program.c']) {
+                this.makeActive(null);
+                const content = this.fs.readFileSync('/program.c').toString('binary');
+                this.makeActive('/program.c');
+                this.editor.setFile(this.metaDataPathLookUp['/program.c'].path, this.metaDataPathLookUp['/program.c'].name, content);
+            }
+        } else if (language === 'c++') {
+            if (this.metaDataPathLookUp['/hello.cpp']) {
+                this.makeActive(null);
+                const content = this.fs.readFileSync('/hello.cpp').toString('binary');
+                this.makeActive('/hello.cpp');
+                this.editor.setFile(this.metaDataPathLookUp['/hello.cpp'].path, this.metaDataPathLookUp['/hello.cpp'].name, content);
+            }
+        }
     }
 
     dispose() {

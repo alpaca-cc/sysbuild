@@ -73,9 +73,62 @@ class LiveEdit {
 
     runCode(buildCmd) {
         SysGlobalObservables.fileBrowser.saveActiveFile();
-        const callback = this.processGccCompletion.bind(this);
-        SysGlobalObservables.compileStatus('Compiling');
-        this.runtime.startBuild(buildCmd, callback);
+        if (buildCmd.startsWith('gcc')) {
+            const callback = this.processGccCompletion.bind(this);
+            SysGlobalObservables.compileStatus('Compiling c');
+            this.runtime.startBuild(buildCmd, callback);
+        } else if (buildCmd.startsWith('g++')) {
+            // let startTime = new Date().getTime();
+            const callback = this.processCppCompletion.bind(this);
+            this.runCppCode(buildCmd, callback);
+            // let endTime = this.runCppCode(buildCmd, callback);
+            // console.log(startTime, endTime);
+            // console.log("duration [ms] = " + (endTime - startTime));
+        }
+    }
+
+    processCppCompletion() {
+        const runtime = this.runtime;
+        // setTimeout(function() {
+        //     runtime.sendKeys('tty0', 'chmod 755 hello\n');
+        // }, 1500);
+        // // setTimeout(function() {
+        // //     runtime.sendKeys('tty0', 'clear\n');
+        // // }, 1100);
+        // // setTimeout(function() {
+        // //     runtime.sendKeys('tty0', './hello\n');
+        // // }, 1200);
+        // this.runtime.sendKeys('tty0', 'clear\n');
+        // this.runtime.sendKeys('tty0', 'chmod 755 hello\n');
+        // this.runtime.sendKeys('tty0', './hello\n');
+        // let endTime = new Date().getTime();
+        // return endTime;
+        // this.runtime.sendExecCmd(SysGlobalObservables.execCmd());
+    }
+
+    runCppCode(buildCmd, callback) {
+        // TODO: add compile error handling, add buildCmd handling
+        this.sourceCode = SysGlobalObservables.editor.getText();
+        SysGlobalObservables.compileStatus('Compiling c++');
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://127.0.0.1:5000/compile/api/v1/compile?compiler=g%2B%2B', true);
+
+        // Send the proper header information along with the request
+        xhr.setRequestHeader('Content-type', 'text/plain');
+        xhr.setRequestHeader('Accept', 'application/octet-stream');
+        xhr.responseType = 'arraybuffer';
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                const content = new Uint8Array(xhr.response);
+                SysGlobalObservables.fileBrowser.fs.writeBinaryFile('/' + 'hello', content);
+            }
+        };
+        xhr.send(this.sourceCode);
+
+        callback();
+        // let endTime = callback();
+        // return endTime;
     }
 }
 
